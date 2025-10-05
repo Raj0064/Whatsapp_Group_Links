@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join Groups</title>
+  <style>
+ body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0px 20px;
+
+   
+  /* CENTER THE CONTAINER */
+  display: flex;
+  justify-content: center; /* horizontal center */
+  align-items: center;     /* vertical center */
+  /* padding: 20px; */
+}
+
+.container {
+  background: white;
+  color: #333;
+  max-width: 400px;
+  width: 100%;      /* optional for responsiveness */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+
+    h2 {
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    .btn {
+      display: block;
+      /* width: 100%; */
+      margin-top: 12px;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.03);
+    }
+
+    .loading {
+      font-size: 30px;
+      margin-top: 40px;
+     color: white;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container" id="content">
+    <h2>Fetching your group links...</h2>
+    <div class="loading">🔄</div>
+  </div>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwsewRFHXEmXD2rJa_3wk880yXQAlyJJnVxt0GaoPJZF0ondSWN3gaGKLhIgu0n31FI/exec"; // Replace with your deployed Apps Script URL
+
+    // Get query params from URL
+    const params = new URLSearchParams(window.location.search);
+    const grade = params.get("class");
+    const board = params.get("board");
+
+    const content = document.getElementById("content");
+
+    if (!grade || !board) {
+      content.innerHTML = `
+        <h2>Invalid Access</h2>
+        <p>Please go back and fill the form again.</p>
+      `;
+    } else {
+      fetch(`${WEB_APP_URL}?class=${grade}&board=${board}`)
+        .then(res => res.json())
+        .then(data => {
+          const olympiadLink = data.olympiad?.trim();
+          const boardLink = data.board?.trim();
+
+          let html = `<h2>Join Your Groups</h2>`;
+
+         if (olympiadLink) {
+            const url = olympiadLink.startsWith("http") ? olympiadLink : "https://" + olympiadLink;
+            const displayGrade = grade === "0" ? "KG" : grade; // handle KG as special case
+            html += `<a class="btn" href="${url}" target="_blank">Class ${displayGrade} Olympiad Group</a>`;
+          }
+          //  else {
+          //   html += `<p>❌ No Olympiad group link found for Class ${grade === "0" ? "KG" : grade}.</p>`;
+          // }
+
+
+          if (boardLink) {
+            const url = boardLink.startsWith("http") ? boardLink : "https://" + boardLink;
+            html += `<a class="btn" href="${url}" target="_blank">Class ${grade} ${board} Group</a>`;
+          } 
+          // else {
+          //   html += `<p>❌ No ${board} group link found for Class ${grade}.</p>`;
+          // }
+
+          content.innerHTML = html;
+        })
+        .catch(err => {
+          console.error(err);
+          content.innerHTML = `
+            <h2>⚠️ Error loading links</h2>
+            <p>Something went wrong while fetching your group links.</p>
+          `;
+        });
+    }
+  </script>
+</body>
+
+</html>
