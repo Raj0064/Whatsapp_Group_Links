@@ -171,9 +171,9 @@ span.error {
     </div>
 
     <div>
-      <input type="text" id="mobile" placeholder="Whatsapp Number">
+      <input type="Number" id="mobile" placeholder="Whatsapp Number">
       <span class="error" id="error-mobile">* Please fill your mobile number</span>
-      <span class="error" id="error-mobile-format">* Please enter a valid 10-digit mobile number</span>
+      <span class="error" id="error-mobile-format">* Please enter a valid mobile number</span>
     </div>
 
     <div>
@@ -181,7 +181,7 @@ span.error {
         <option value="">Select Board</option>
         <option value="CBSE">CBSE</option>
         <option value="ICSE">ICSE</option>
-        <option value="IGCSE">IGCSE</option>
+        <option value="IGCSE">Others</option>
       </select>
       <span class="error" id="error-board">* Please select a board</span>
     </div>
@@ -249,7 +249,7 @@ span.error {
         if (!mobile) { document.getElementById("error-mobile").style.display = "block"; valid = false; }
 
         // Mobile number validation (10 digits)
-        const mobilePattern = /^[0-9]{10}$/;
+        const mobilePattern = /^[0-9]+$/;
         if (mobile && !mobilePattern.test(mobile)) {
           document.getElementById("error-mobile-format").style.display = "block";
           valid = false;
